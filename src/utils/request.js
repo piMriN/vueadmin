@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '../store'
-// import router from '../router'
+import router from '../router'
 import loading from './loading'
 import { ElMessage } from 'element-plus'
 
@@ -19,12 +19,12 @@ service.interceptors.request.use(
     const token = store.getters.token
     if (token) config.headers.Authorization = 'Bearer ' + token
 
-    if (token) {
-      // if (isCheckTimeout()) {
-      //   store.dispatch('user/logout')
-      //   router.push('/login')
-      // }
-    }
+    // if (token) {
+    //   if (isCheckTimeout()) {
+    //     store.dispatch('user/logout')
+    //     router.push('/login')
+    //   }
+    // }
 
     return config
   },
@@ -55,14 +55,14 @@ service.interceptors.response.use(
     // 关闭loading加载
     loading.close()
 
-    // if (
-    //   error.response &&
-    //   error.response.data &&
-    //   error.response.data.code === 401
-    // ) {
-    //   store.dispatch('user/lgout')
-    //   router.push('/login')
-    // }
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.code === 401
+    ) {
+      store.dispatch('user/lgout')
+      router.push('/login')
+    }
 
     // 响应失败进行信息提示
     _showError(error.message)
