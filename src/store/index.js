@@ -1,11 +1,22 @@
 import { createStore } from 'vuex'
 import user from './modules/user'
-import permission from './modules/permission'
-import getters from './getters'
+import permission from '@/store/modules/permission'
+import tags from '@/store/modules/tags'
+
 export default createStore({
-  getters,
+  getters: {
+    token: state => state.user.token,
+    hasuserInfo: state => {
+      return JSON.stringify(state.user.userInfo) === '{}'
+    },
+    userInfo: state => state.user.userInfo,
+    tags: state => state.tags.tagsArray
+
+  },
   modules: {
     user,
-    permission
+    permission,
+    tags
   }
+
 })

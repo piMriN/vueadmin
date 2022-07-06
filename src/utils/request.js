@@ -1,7 +1,6 @@
 import axios from 'axios'
 import store from '../store'
 import router from '../router'
-import loading from './loading'
 import { ElMessage } from 'element-plus'
 
 // 创建axios实例对象
@@ -13,8 +12,6 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    // 打开loading加载
-    loading.open()
     // TODO 将token 通过请求头发送给后台
     const token = store.getters.token
     if (token) config.headers.Authorization = 'Bearer ' + token
@@ -29,8 +26,6 @@ service.interceptors.request.use(
     return config
   },
   (error) => {
-    // 关闭loading加载
-    loading.close()
     return Promise.reject(error)
   }
 )
@@ -38,9 +33,6 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
-    // 关闭loading加载
-    loading.close()
-
     const { code, data, msg } = response.data
 
     // TODO 全局响应处理
@@ -52,9 +44,6 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    // 关闭loading加载
-    loading.close()
-
     if (
       error.response &&
       error.response.data &&

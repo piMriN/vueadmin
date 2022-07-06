@@ -1,21 +1,11 @@
 import request from '@/utils/request'
 
-const login = (data) => {
-  return request({
-    url: '/login',
-    method: 'POST',
-    data
-  })
+export const getCaptcha = () => {
+  return request.get('/captcha')
 }
-
-const imgcode = () => {
-  return request({
-    url: '/captcha',
-    method: 'GET'
-  })
+export const apiLogin = (model) => {
+  return request.post(`/login?username=${model.username}&password=${model.password}&code=${model.code}&token=${model.token}`)
 }
-
-export default {
-  login,
-  imgcode
+export const getUserInfo = () => {
+  return request.get('/sys/userInfo')
 }

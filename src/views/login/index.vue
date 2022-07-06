@@ -25,12 +25,10 @@
 </template>
 
 <script setup>
-import util from '../../utils/util'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { setTimeStamp } from '../../utils/auth'
-import UserApi from '../../api/user'
+import { getCaptcha } from '../../api/user'
 
 const imgcodes = ref('')
 const store = useStore()
@@ -38,7 +36,7 @@ const router = useRouter()
 const LoginForm = ref()
 
 const loginForm = reactive({
-  username: 'test',
+  username: 'text',
   password: '',
   captcha: ''
 })
@@ -64,9 +62,7 @@ const handleLoginSubmit = async () => {
   if (!LoginForm.value) return
   await LoginForm.value.validate(async (valid) => {
     if (valid) {
-      const newLoginForm = util.deepCopy(loginForm)
-      const response = await store.dispatch('user/login', newLoginForm)
-      setTimeStamp()
+      const response = await store.dispatch('user/login')
       if (response.token) router.push('/')
     }
   })
@@ -74,9 +70,8 @@ const handleLoginSubmit = async () => {
 
 const getCode = async () => {
   try {
-    const res = await UserApi.imgcode()
-    console.log(res)
-    imgcodes.value = res.captchaImg
+    const res = await getCaptcha.imgcodes()
+    imgcodes.value = res.imgcodes
     loginForm.token = res.token
     console.log(loginForm.token)
     console.log(imgcodes)
@@ -109,9 +104,10 @@ getCode()
   margin-top: 40px;
 }
 .img {
-  position: absolute;
+  position: relative;
   width: 100px;
   height: 50px;
+  position: absolute;
   margin-left: 290px;
 }
 </style>
