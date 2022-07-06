@@ -1,5 +1,5 @@
 {
-  "name": "vueadmin",
+  "name": "vue3",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,20 +9,17 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.0.6",
-    "ant-design-vue": "^3.2.9",
-    "antd": "^4.16.1",
+    "@commitlint/cli": "^12.1.4",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-plus": "^2.2.8",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
+    "vue-router": "^4.1.0",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
-    "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",

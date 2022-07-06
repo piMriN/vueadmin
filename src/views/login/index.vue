@@ -1,113 +1,124 @@
 <template>
-  <div class="container">
-    <div class="center">
-      <h3 class="title">欢迎来到VueAdmin管理系统</h3>
+  <div class="login-container">
+    <el-form
+      ref="loginfrom"
+      :model="ruleForm"
+      :rules="LoginFormref"
+      :size="formSize"
+      class="demo-ruleForm"
+      label-width="120px"
+      status-icon
+    >
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="ruleForm.username" style="width: 200px"/>
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="ruleForm.password" style="width: 200px" type="password"/>
+      </el-form-item>
+      <el-form-item label="验证码" prop="code">
+        <el-input v-model="ruleForm.code" label-width="150px" style="width: 100px"/>
+        <img :src="captchaImg" alt="" @click="codeImg()">
+      </el-form-item>
+      <el-form-item>
 
-      <el-form ref="loginForms" :rules="loginRules" :model="loginForm">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="loginForm.username"></el-input>
-        </el-form-item>
+        <el-button @click="handleLoginSubmit(ruleForm)">提交</el-button>
+        <el-button>获取密码</el-button>
 
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="loginForm.password"></el-input>
-        </el-form-item>
-        <el-form-item label="验证码" prop="captcha">
-          <el-input v-model="loginForm.captcha"></el-input>
-          <img :src="imgcodes" @click="getcode" class="img" />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleLoginSubmit">提交</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+      </el-form-item>
+    </el-form>
   </div>
+
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { useStore } from 'vuex'
+import { validatePassword } from './rules'
+import { getCodeImg, login } from '@/api/login'
 import { useRouter } from 'vue-router'
-import { getCaptcha } from '../../api/user'
+import { useStore } from 'vuex'
 
-const imgcodes = ref('')
-const store = useStore()
 const router = useRouter()
-const LoginForm = ref()
-
-const loginForm = reactive({
-  username: 'text',
+const ruleForm = reactive({
+  username: 'test',
   password: '',
-  captcha: ''
+  code: null,
+  token: null
 })
-
-const loginRules = reactive({
+const store = useStore()
+const loginfrom = ref(null)
+const captchaImg = ref()
+const LoginFormref = reactive({
   username: [
     {
       required: true,
-      trigger: 'blur',
-      message: '用户名为必填项'
+      message: '请输入用户名',
+      trigger: 'blur'
+    },
+    {
+      min: 3,
+      max: 5,
+      message: 'Length should be 3 to 5',
+      trigger: 'blur'
     }
   ],
   password: [
     {
       required: true,
       trigger: 'blur',
-      message: '密码错误'
+      validator: validatePassword
     }
-  ]
+  ],
+  code: [{
+    required: true,
+    message: '输验证码',
+    trigger: 'change'
+  }]
 })
-
-const handleLoginSubmit = async () => {
-  if (!LoginForm.value) return
-  await LoginForm.value.validate(async (valid) => {
+const handleLoginSubmit = () => {
+  loginfrom.value.validate(async (valid) => {
     if (valid) {
-      const response = await store.dispatch('user/login')
-      if (response.token) router.push('/')
+      try {
+        console.log(ruleForm, 'ruleForm')
+        const res = await login(ruleForm)
+        console.log(res, 'resres')
+        store.dispatch('user/getUserInfo')
+        router.push('/')
+      } catch (e) {
+
+      }
+    } else {
+      console.log('error submit!')
+      return false
     }
   })
 }
-
-const getCode = async () => {
-  try {
-    const res = await getCaptcha.imgcodes()
-    imgcodes.value = res.imgcodes
-    loginForm.token = res.token
-    console.log(loginForm.token)
-    console.log(imgcodes)
-  } catch (error) {}
+const codeImg = async () => {
+  const res = await getCodeImg()
+  console.log('123', res)
+  captchaImg.value = res.captchaImg
+  ruleForm.token = res.token
 }
-getCode()
+codeImg()
 </script>
 
 <style lang="scss" scoped>
-.container {
-  width: 100%;
+.login-container {
   height: 100%;
   background: url('../../assets/稻草人.jpeg') no-repeat;
-}
-.center {
-  height: max-content;
-  position: absolute;
-  left: 50%;
-  top: 160px;
-  margin-left: -175px;
-  padding: 28px;
-  color: white;
-}
-.title {
-  font-size: 26px;
-  font-weight: 700;
-  text-align: center;
-}
-.el-form {
-  margin-top: 40px;
-}
-.img {
-  position: relative;
-  width: 100px;
-  height: 50px;
-  position: absolute;
-  margin-left: 290px;
+  width: 100%;
+
+  .demo-ruleForm {
+    width: 520px;
+    padding: 0 35px;
+    position: absolute;
+    left: 50%;
+    margin-left: -260px;
+    top: 250px;
+    overflow: hidden;
+
+    ::v-deep .el-input__wrapper {
+      width: 50px;
+    }
+  }
 }
 </style>

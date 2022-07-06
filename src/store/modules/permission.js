@@ -1,4 +1,4 @@
-import { privateRoute, routes } from '@/router'
+import { privateRout, routes } from '@/router'
 
 export default {
   namespaced: true,
@@ -9,12 +9,13 @@ export default {
     setRouter (state, newRouter) {
       state.router = [...routes, ...newRouter]
     }
+
   },
   actions: {
     filterRouter ({ commit }, menus) {
       const result = []
       menus.forEach(name => {
-        result.push(...privateRoute.filter(item => item.name === name))
+        result.push(...privateRout.filter(item => item.name === name))
       })
       result.push({
         path: '/:catchAll(.*)',
@@ -22,5 +23,7 @@ export default {
       })
       return result
     }
+
   }
+
 }

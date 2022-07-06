@@ -1,76 +1,37 @@
 import axios from 'axios'
-import store from '../store'
-import router from '../router'
-import { ElMessage } from 'element-plus'
+import store from '@/store/index'
 
-// 创建axios实例对象
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000
+const instance = axios.create({
+  baseURL: process.env.VUE_APP_SERVICE_URL,
+  timeout: 1000,
+  headers: { 'X-Custom-Header': 'foobar' }
+})
+// 添加请求拦截器
+instance.interceptors.request.use(function (config) {
+  // 在发送请求之前做些什么
+  const token = store.getters.token
+  console.log(token, 'token')
+  if (token) {
+    config.headers.Authorization = token
+  }
+
+  return config
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error)
 })
 
-// 请求拦截器
-service.interceptors.request.use(
-  (config) => {
-    // TODO 将token 通过请求头发送给后台
-    const token = store.getters.token
-    if (token) config.headers.Authorization = 'Bearer ' + token
-
-    // if (token) {
-    //   if (isCheckTimeout()) {
-    //     store.dispatch('user/logout')
-    //     router.push('/login')
-    //   }
-    // }
-
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
+// 添加响应拦截器
+instance.interceptors.response.use(function (response) {
+  // 对响应数据做点什么
+  console.log(response)
+  if (response.headers.authorization) {
+    store.commit('user/setToken', response.headers.authorization)
   }
-)
+  return response.data.data
+}, function (error) {
+  // 对响应错误做点什么
+  return Promise.reject(error)
+})
 
-// 响应拦截器
-service.interceptors.response.use(
-  (response) => {
-    const { code, data, msg } = response.data
-
-    // TODO 全局响应处理
-    if (code) {
-      return data
-    } else {
-      _showError(msg)
-      return Promise.reject(new Error(msg))
-    }
-  },
-  (error) => {
-    if (
-      error.response &&
-      error.response.data &&
-      error.response.data.code === 401
-    ) {
-      store.dispatch('user/lgout')
-      router.push('/login')
-    }
-
-    // 响应失败进行信息提示
-    _showError(error.message)
-    return Promise.reject(error)
-  }
-)
-
-// 响应提示信息
-const _showError = (message) => {
-  const info = message || '发生未知错误'
-  ElMessage.error(info)
-}
-
-// 统一了传参处理
-const request = (options) => {
-  if (options.method.toLowerCase() === 'get') {
-    options.params = options.data || {}
-  }
-  return service(options)
-}
-
-export default request
+export default instance

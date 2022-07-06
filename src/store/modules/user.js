@@ -1,15 +1,13 @@
-import { getItem, setItem } from '@/utils/storage'
-import { getUserInfo } from '@/api/user'
-import router from '@/router'
-import { message } from 'ant-design-vue'
+import { getItem, removeAllItem, setItem } from '@/utils/storage'
+import { getUserInfo } from '@/api/login'
 import { getNav } from '@/api/nav'
 
 export default {
   namespaced: true,
   state: {
-    token: getItem('token') || null,
-    userInfo: {},
-    menus: []
+    token: getItem('token') || [],
+    userInfo: {}
+
   },
   mutations: {
     setToken (state, token) {
@@ -21,17 +19,15 @@ export default {
     },
     logout (state) {
       state.token = ''
-      state.userInfo = {}
-      setItem('token', '')
-      router.push('/login')
-      message.success('退出成功！')
+      removeAllItem()
     },
     setMenu (state, payload) {
       state.menus = payload
     }
   },
   actions: {
-    async getUserInfo ({ commit }) {
+    // 获取token
+    async getUserInfo ({ commit }, payload) {
       const res = await getUserInfo()
       const navs = await getNav()
       console.log(navs)
@@ -39,5 +35,7 @@ export default {
       commit('setMenu', navs)
       return navs
     }
+
   }
+
 }

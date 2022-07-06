@@ -1,65 +1,65 @@
 <template>
-  <div class="navbox">
-    <h1>VueAdmin后台管理系统</h1>
+  <div class="navbar">
+    <div class="left">
+      <h3>VueAdmin后台管理系统</h3>
+    </div>
     <div class="right">
-      <a-avatar :src="$store.getters.userInfo.avatar" />
-      <span class="dropdown">
-        <a-dropdown :trigger="['click']">
-          <a class="ant-dropdown-link" @click.prevent>
-            {{ $store.getters.userInfo.username }}
-            <DownOutlined />
-          </a>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="$router.push('/')" class="tc"
-                  >个人中心</a
-                >
-              </a-menu-item>
-              <a-menu-item>
-                <a href="javascript:;" @click="showConfirm" class="tc"
-                  >退出登录</a
-                >
-              </a-menu-item>
-            </a-menu>
+      <div class="loginout">
+        <el-dropdown>
+    <span class="el-dropdown-link">
+        <a>{{ $store.getters.userInfo.username }}</a>
+      <el-icon class="el-icon--right">
+        <arrow-down/>
+      </el-icon>
+    </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="$router.push('/')">个人中心</el-dropdown-item>
+              <el-dropdown-item @click="handleCommand">退出</el-dropdown-item>
+
+            </el-dropdown-menu>
           </template>
-        </a-dropdown>
-      </span>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { DownOutlined } from '@ant-design/icons-vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
+const router = useRouter()
 const store = useStore()
-const showConfirm = () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve()
-    }, 500)
-  }).then(() => {
-    store.commit('user/logout')
-  })
+const handleCommand = () => {
+  store.commit('user/logout')
+  router.push('/login')
 }
 </script>
-<style lang="scss" scoped>
-.navbox {
-  display: flex;
-  padding: 0 40px;
-  justify-content: space-between;
-  align-items: center;
-  h1 {
-    padding-left: 400px;
-  }
-}
 
-.dropdown {
-  margin: 0 10px;
-}
-.tc {
-  position: relative;
-  padding-left: 1450px;
+<style lang="scss" scoped>
+.navbar {
+  flex: 1;
+  width: 85%;
+  height: 60px;
+  line-height: 60px;
+  background-color: #17b3a3;
+  display: flex;
+  justify-content: center;
+
+  .left {
+    width: 80%;
+    text-align: center;
+    font-size: 15px;
+
+  }
+
+  .right {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    line-height: 100%;
+  }
 }
 </style>

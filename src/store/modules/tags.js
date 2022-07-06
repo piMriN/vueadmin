@@ -1,21 +1,17 @@
-import { getItem, setItem } from '@/utils/storage'
-
 export default {
   namespaced: true,
   state: () => ({
-    tagsArray: getItem('tags') || []
+    tagArr: []
   }),
   mutations: {
     addTag (state, tag) {
-      const data = state.tagsArray.find(item => item.path === tag.path)
+      const data = state.tagArr.find(item => item.path === tag.path)
       if (!data) {
-        state.tagsArray.push(tag)
-        setItem('tags', state.tagsArray)
+        state.tagArr.push(tag)
       }
     },
     delTag (state, index) {
-      state.tagsArray.splice(index, 1)
-      setItem('tags', state.tagsArray)
+      state.tagArr.splice(index, 1)
     }
   }
 }

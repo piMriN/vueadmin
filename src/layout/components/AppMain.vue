@@ -1,14 +1,15 @@
 <template>
 
-  <a-card>
+  <el-card>
     <router-view></router-view>
-  </a-card>
+  </el-card>
 
 </template>
 
 <script setup>
 
 </script>
+
 <style lang="scss" scoped>
 
 </style>

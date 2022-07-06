@@ -1,6 +1,11 @@
 <template>
-  <div>角色列表</div>
+  <div>角色</div>
 </template>
 
-<script setup></script>
-<style lang="scss" scoped></style>
+<script setup>
+
+</script>
+
+<style lang="scss" scoped>
+
+</style>
